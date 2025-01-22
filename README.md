@@ -11,6 +11,9 @@ https://www.iocoder.cn/Spring-Boot/RabbitMQ/?self
 
 https://github.com/yudaocode/SpringBoot-Labs/tree/master/lab-04-rabbitmq/lab-04-rabbitmq-demo
 
+各种例子：
+
+https://github.com/yudaocode/SpringBoot-Labs/tree/master/lab-04-rabbitmq
 
 官方例子：
 
