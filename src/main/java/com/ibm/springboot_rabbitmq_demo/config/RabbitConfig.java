@@ -3,6 +3,7 @@ package com.ibm.springboot_rabbitmq_demo.config;
 import com.ibm.springboot_rabbitmq_demo.message.Demo01Message;
 import com.ibm.springboot_rabbitmq_demo.message.Demo02Message;
 import com.ibm.springboot_rabbitmq_demo.message.Demo03Message;
+import com.ibm.springboot_rabbitmq_demo.message.Demo04Message;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
@@ -162,6 +163,52 @@ public class RabbitConfig {
         public Binding demo03BindingB() {
             return BindingBuilder.bind(demo03QueueB()).to(demo03Exchange());
         }
+
+    }
+
+
+    /**
+     * Headers Exchange 示例的配置类
+     */
+    public static class HeadersExchangeDemoConfiguration {
+
+        // 创建 Queue
+        @Bean
+        public Queue demo04Queue() {
+            return new Queue(Demo04Message.QUEUE, // Queue 名字
+                    true, // durable: 是否持久化
+                    false, // exclusive: 是否排它
+                    false); // autoDelete: 是否自动删除
+        }
+
+        // 创建 Headers Exchange
+        @Bean
+        public HeadersExchange demo04Exchange() {
+            return new HeadersExchange(Demo04Message.EXCHANGE,
+                    true,  // durable: 是否持久化
+                    false);  // exclusive: 是否排它
+        }
+
+        // 创建 Binding
+        // Exchange：Demo04Message.EXCHANGE
+        // Queue：Demo04Message.QUEUE
+        // Headers: Demo04Message.HEADER_KEY + Demo04Message.HEADER_VALUE
+        @Bean
+        public Binding demo4Binding() {
+            return BindingBuilder.bind(demo04Queue()).to(demo04Exchange())
+                    .where(Demo04Message.HEADER_KEY).matches(Demo04Message.HEADER_VALUE); // 配置 Headers 匹配
+        }
+
+        /**
+         * Headers Exchange 不依赖于 routing key 与 binding key 的匹配规则来路由消息，而是根据发送的消息内容中的 headers 属性进行匹配。
+         *
+         * 在绑定 Queue 与 Exchange 时指定一组 headers 键值对。
+         * 当消息发送到 Exchange 时，RabbitMQ 会取到该消息的 headers（也是一个键值对的形式），对比其中的键值对是否完全匹配
+         * Queue 与 Exchange 绑定时指定的键值对；
+         * 如果完全匹配则消息会路由到该 Queue ，否则不会路由到该 Queue 。
+         *
+         * 不过艿艿在查询资料的时候，有资料说 Headers Exchange 性能很差，实际场景也使用比较少。所以本小节的内容，胖友可以选择性看。
+         */
 
     }
 }
